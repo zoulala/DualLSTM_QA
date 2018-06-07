@@ -115,7 +115,7 @@ import xlrd
 from read_utils import get_excel_QAs, get_QAs_text
 # DualLSTM
 def main(_):
-    model_path = os.path.join('model', FLAGS.name)
+    model_path = os.path.join('models', FLAGS.name)
     if os.path.exists(model_path) is False:
         os.makedirs(model_path)
 

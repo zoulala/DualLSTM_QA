@@ -23,20 +23,20 @@ from IPython import embed
 import argparse # 用于分析输入的超参数
 
 # # 英文诗（莎士比亚）
-# args_in = '--converter_path model/shakespeare/converter.pkl ' \
-#           '--checkpoint_path model/shakespeare/ ' \
+# args_in = '--converter_path models/shakespeare/converter.pkl ' \
+#           '--checkpoint_path models/shakespeare/ ' \
 #           '--max_length 1000'.split()
 
 # ## 中文诗词
-# args_in = '--converter_path model/poetry/converter.pkl ' \
-#           '--checkpoint_path model/poetry/ ' \
+# args_in = '--converter_path models/poetry/converter.pkl ' \
+#           '--checkpoint_path models/poetry/ ' \
 #           '--max_length 300'.split()
 
 ## thoth
-args_in = '--converter_path model/thoth/converter.pkl ' \
+args_in = '--converter_path models/thoth/converter.pkl ' \
           '--input_file data/去除2和null.xlsx ' \
           '--sheetname Sheet1 ' \
-          '--checkpoint_path model/thoth/ ' \
+          '--checkpoint_path models/thoth/ ' \
           '--num_steps 26 ' \
           '--num_seqs 32 ' \
           '--max_length 300'.split()
