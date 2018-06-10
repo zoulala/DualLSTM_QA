@@ -41,15 +41,21 @@ import argparse # 用于分析输入的超参数
 #           '--learning_rate 0.01 ' \
 #           '--max_steps 20000'.split()
 
-## 中文诗词
-args_in = '--input_file data/去除2和null.xlsx ' \
-          '--name thoth ' \
+# ## thoth 问答
+# args_in = '--input_file data/去除2和null.xlsx ' \
+#           '--name thoth ' \
+#           '--num_steps 26 ' \
+#           '--num_seqs 32 ' \
+#           '--learning_rate 0.001 ' \
+#           '--sheetname Sheet1 ' \
+#           '--max_steps 20000'.split()
+## 小黄鸡问答
+args_in = '--input_file data/xiaohuangji50w_fenciA.conv ' \
+          '--name xhj ' \
           '--num_steps 26 ' \
           '--num_seqs 32 ' \
           '--learning_rate 0.001 ' \
-          '--sheetname Sheet1 ' \
           '--max_steps 20000'.split()
-
 
 def parseArgs(args):
     """
@@ -73,7 +79,7 @@ def parseArgs(args):
     test_args.add_argument('--max_steps', type=int, default=100000,help='max steps to train')
     test_args.add_argument('--save_every_n', type=int, default=1000,help='save the model every n steps')
     test_args.add_argument('--log_every_n', type=int, default=10,help='log to the screen every n steps')
-    test_args.add_argument('--max_vocab', type=int, default=3500,help='max char number')
+    test_args.add_argument('--max_vocab', type=int, default=8000,help='max char number')
     test_args.add_argument('--sheetname', type=str, default='default',help='name of the model')
     return parser.parse_args(args)
 
@@ -119,7 +125,13 @@ def main(_):
     if os.path.exists(model_path) is False:
         os.makedirs(model_path)
 
-    QAs = get_excel_QAs(FLAGS.input_file)  # 要求excel文件格式，第一个表，第一列id，第二列query,第三列response
+    # # excel data
+    # QAs = get_excel_QAs(FLAGS.input_file)  # 要求excel文件格式，第一个表，第一列id，第二列query,第三列response
+
+    # xhj data
+    from read_utils import loadConversations
+    QAs = loadConversations(FLAGS.input_file)
+
     text = get_QAs_text(QAs)
 
     converter = TextConverter(text, FLAGS.max_vocab)

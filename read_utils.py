@@ -66,10 +66,11 @@ def get_excel_QAs(excel_file):
 def get_QAs_text(QAs):
     '''获取问答对中文本'''
     text = ''
+
     for query,response in QAs:
         text += query + response
-    return text
 
+    return text
 
 class TextConverter(object):
     def __init__(self, text=None, max_vocab=5000, filename=None):
@@ -167,7 +168,7 @@ class TextConverter(object):
                 response_arr = response_arr[:n_steps]
                 response_len = n_steps
 
-            QA_arrs.append((query_arr,query_len,response_arr,response_len))
+            QA_arrs.append([query_arr,query_len,response_arr,response_len])
 
         return QA_arrs
 
@@ -276,3 +277,36 @@ class TextConverter(object):
             k += 1
         outputbook.save(path + '_Q_for_libs.xls')
         print('finished!')
+
+
+def loadConversations(fileName):
+    """
+    Args:
+        fileName (str): file to load
+    Return:
+        list<dict<str>>: the extracted fields for each line
+    """
+    with open(fileName, 'r',encoding='utf-8') as f:
+        lineID = 0
+        label= None
+        conversations = []
+        for line in f:
+            if lineID<100:
+                print(line)
+            if lineID==0 or label=='E': # next dialogue
+                label = line[0]
+                content = line[2:].strip()
+                conversation = [''.join(content.split('/'))]
+            else:
+                label = line[0]
+                if label!='E':
+                    content = line[2:].strip()
+                    conversation.append(''.join(content.split('/')))
+                else:
+                    conversations.append(tuple(conversation[:2]))
+            lineID += 1
+    return conversations
+
+if __name__ == '__main__':
+
+    loadConversations('data/xiaohuangji50w_fenciA.conv')
