@@ -259,6 +259,11 @@ class TextConverter(object):
         for index in index_list:
             responses.append(libs[index])
         return responses
+    def index_to_response2(self, index_list, QAs):
+        responses = []
+        for index in index_list:
+            responses.append(QAs[index][-1])
+        return responses
 
     def save_to_excel(self, QAY, path):
         '''result to save...'''

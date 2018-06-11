@@ -370,6 +370,22 @@ class DualLSTM():
         print('libs caculate ok')
         return response_matul_state
 
+    def test5_matul(self, QA_arrs):
+        sess = self.session
+        response_matul_state = np.empty([1,self.lstm_size])
+        n = len(QA_arrs[2])
+        for i in range(n):
+            feed = {self.response_seqs: QA_arrs[2][i].reshape(-1,self.num_steps),
+                    self.response_length: QA_arrs[3][i].reshape(1),
+                    self.keep_prob: 1.}
+            response_one_state = sess.run(self.response_matul_state, feed_dict=feed)
+            response_matul_state = np.append(response_matul_state, response_one_state,axis=0)
+            if i%1000==0:
+                print(i)
+        response_matul_state = np.delete(response_matul_state,0,0)
+        print('QA_arrs caculate ok')
+        return response_matul_state
+
     def test4(self,input_arr,input_len, response_matul_state):
         sess = self.session
         feed = {self.query_seqs: input_arr.reshape(-1, self.num_steps),
