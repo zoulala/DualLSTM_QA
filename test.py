@@ -33,22 +33,22 @@ import argparse # 用于分析输入的超参数
 #           '--max_length 300'.split()
 
 # ## thoth
+# args_in = '--converter_path models/thoth/converter.pkl ' \
+#           '--input_file data/去除2和null.xlsx ' \
+#           '--sheetname Sheet1 ' \
+#           '--checkpoint_path models/thoth/ ' \
+#           '--num_steps 26 ' \
+#           '--num_seqs 32 ' \
+#           '--max_length 300'.split()
+
+## 小黄鸡问答
 args_in = '--converter_path models/xhj/converter.pkl ' \
-          '--input_file data/去除2和null.xlsx ' \
+          '--input_file data/xiaohuangji50w_fenciA.conv ' \
           '--sheetname Sheet1 ' \
           '--checkpoint_path models/xhj/ ' \
           '--num_steps 26 ' \
           '--num_seqs 32 ' \
           '--max_length 300'.split()
-
-## 小黄鸡问答
-# args_in = '--converter_path models/xhj/converter.pkl ' \
-#           '--input_file data/xiaohuangji50w_fenciA.conv ' \
-#           '--sheetname Sheet1 ' \
-#           '--checkpoint_path models/xhj/ ' \
-#           '--num_steps 26 ' \
-#           '--num_seqs 32 ' \
-#           '--max_length 300'.split()
 
 def parseArgs(args):
     """
@@ -119,9 +119,9 @@ def main(_):
 
 
     ## ----------test3-------------
-    QAs = get_excel_QAs(FLAGS.input_file)  # 要求excel文件格式，第一个表，第一列id，第二列query,第三列response
-    QA_arrs = converter.QAs_to_arrs(QAs, FLAGS.num_steps)
-    all_samples = converter.samples_for_test3(QA_arrs)
+    # QAs = get_excel_QAs(FLAGS.input_file)  # 要求excel文件格式，第一个表，第一列id，第二列query,第三列response
+    # QA_arrs = converter.QAs_to_arrs(QAs, FLAGS.num_steps)
+    # all_samples = converter.samples_for_test3(QA_arrs)
     # indexs = model.test3(all_samples)
     # converter.index_to_QA_and_save(indexs,QAs,FLAGS.checkpoint_path)
 
@@ -147,11 +147,11 @@ def main(_):
 
 
     ## ----------test5------------
-    # from read_utils import loadConversations
-    # QAs = loadConversations(FLAGS.input_file)
-    # QA_arrs = converter.QAs_to_arrs(QAs, FLAGS.num_steps)
-    # QA_arrs = converter.samples_for_test3(QA_arrs[:2000])  # 有454000个样本，花费时间很长
-    response_matul_state = model.test5_matul(all_samples)  # 有454000个样本，花费时间很长
+    from read_utils import loadConversations
+    QAs = loadConversations(FLAGS.input_file)
+    QA_arrs = converter.QAs_to_arrs(QAs, FLAGS.num_steps)
+    QA_arrs = converter.samples_for_test3(QA_arrs[:2000])  # 有454000个样本，花费时间很长
+    response_matul_state = model.test5_matul(QA_arrs)  # 有454000个样本，花费时间很长
     while True:
         query = input('query:')
         input_arr,input_len = converter.Q_to_arr(query,FLAGS.num_steps)
