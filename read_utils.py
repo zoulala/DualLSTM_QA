@@ -228,7 +228,7 @@ class TextConverter(object):
                 k += 1
                 if k > 5:
                     break
-        outputbook.save(path+'use_xhj_Q_for_QA.xls')
+        outputbook.save(path+'_Q_for_QA.xls')
         print('finished!')
 
     # for test4

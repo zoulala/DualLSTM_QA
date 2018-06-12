@@ -1,7 +1,7 @@
-.idea
+.idea/
 models/
 data/
 __pycache__/
-.git
-.xlsx
-.xls
+.git/
+*.xlsx
+*.xls

@@ -122,8 +122,8 @@ def main(_):
     QAs = get_excel_QAs(FLAGS.input_file)  # 要求excel文件格式，第一个表，第一列id，第二列query,第三列response
     QA_arrs = converter.QAs_to_arrs(QAs, FLAGS.num_steps)
     all_samples = converter.samples_for_test3(QA_arrs)
-    indexs = model.test3(all_samples)
-    converter.index_to_QA_and_save(indexs,QAs,FLAGS.checkpoint_path)
+    # indexs = model.test3(all_samples)
+    # converter.index_to_QA_and_save(indexs,QAs,FLAGS.checkpoint_path)
 
     ## ----------test4-------------
     # libs = get_excel_libs('data/tianlong_libs.xlsx')
@@ -145,17 +145,19 @@ def main(_):
     # print('accuracy:',k/float(n))
     # converter.save_to_excel(QAY, FLAGS.checkpoint_path)
 
+
+    ## ----------test5------------
     # from read_utils import loadConversations
     # QAs = loadConversations(FLAGS.input_file)
     # QA_arrs = converter.QAs_to_arrs(QAs, FLAGS.num_steps)
     # QA_arrs = converter.samples_for_test3(QA_arrs[:2000])  # 有454000个样本，花费时间很长
-    # response_matul_state = model.test5_matul(QA_arrs)  # 有454000个样本，花费时间很长
-    # while True:
-    #     query = input('query:')
-    #     input_arr,input_len = converter.Q_to_arr(query,FLAGS.num_steps)
-    #     indexs = model.test4(input_arr,input_len, response_matul_state)
-    #     responses = converter.index_to_response2(indexs, QAs)
-    #     print('response:',responses)
+    response_matul_state = model.test5_matul(all_samples)  # 有454000个样本，花费时间很长
+    while True:
+        query = input('query:')
+        input_arr,input_len = converter.Q_to_arr(query,FLAGS.num_steps)
+        indexs = model.test4(input_arr,input_len, response_matul_state)
+        responses = converter.index_to_response2(indexs, QAs)
+        print('response:',responses)
 
 
 if __name__ == '__main__':
