@@ -148,8 +148,8 @@ def main(_):
     from read_utils import loadConversations
     QAs = loadConversations(FLAGS.input_file)
     QA_arrs = converter.QAs_to_arrs(QAs, FLAGS.num_steps)
-    QA_arrs = converter.samples_for_test3(QA_arrs)
-    response_matul_state = model.test5_matul(QA_arrs)
+    QA_arrs = converter.samples_for_test3(QA_arrs[:2000])  # 有454000个样本，花费时间很长
+    response_matul_state = model.test5_matul(QA_arrs)  # 有454000个样本，花费时间很长
     while True:
         query = input('query:')
         input_arr,input_len = converter.Q_to_arr(query,FLAGS.num_steps)
