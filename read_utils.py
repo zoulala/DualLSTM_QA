@@ -55,7 +55,7 @@ def get_excel_QAs(excel_file):
     excel_sheet = inputbook.sheet_by_index(0)
     n = excel_sheet.nrows
     print("问答对数量:%s" % n)
-    for i in range(0, n):
+    for i in range(1, n):
         row_data = excel_sheet.row_values(i)
         id = str(row_data[0])
         query = str(row_data[1])
@@ -129,6 +129,7 @@ class TextConverter(object):
         return "".join(words)
 
     def save_to_file(self, filename):
+        print("save .pkl ...")
         with open(filename, 'wb') as f:
             pickle.dump(self.vocab, f)
 

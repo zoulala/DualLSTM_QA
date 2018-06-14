@@ -1,9 +1,9 @@
 
 import tensorflow as tf
 from read_utils import TextConverter, batch_generator
-from model import CharLSTM,DualLSTM
+from model import DualLSTM
 import os
-import codecs
+
 
 # FLAGS = tf.flags.FLAGS
 #
@@ -25,21 +25,6 @@ import codecs
 
 import argparse # 用于分析输入的超参数
 
-## 英文诗（莎士比亚）
-# args_in = '--input_file data/shakespeare.txt ' \
-#           '--name shakespeare ' \
-#           '--num_steps 50 ' \
-#           '--num_seqs 32 ' \
-#           '--learning_rate 0.01 ' \
-#           '--max_steps 20000'.split()
-
-# ## 中文诗词
-# args_in = '--input_file data/poetry.txt ' \
-#           '--name poetry ' \
-#           '--num_steps 26 ' \
-#           '--num_seqs 32 ' \
-#           '--learning_rate 0.01 ' \
-#           '--max_steps 20000'.split()
 
 # ## thoth 问答
 # args_in = '--input_file data/去除2和null.xlsx ' \
@@ -49,13 +34,22 @@ import argparse # 用于分析输入的超参数
 #           '--learning_rate 0.001 ' \
 #           '--sheetname Sheet1 ' \
 #           '--max_steps 20000'.split()
-## 小黄鸡问答
-args_in = '--input_file data/xiaohuangji50w_fenciA.conv ' \
-          '--name xhj ' \
+
+## thoth2 问答，去除空格回答项，增加原问题原回答样本
+args_in = '--input_file data/去除2和null_去空_加原话.xlsx ' \
+          '--name thoth2 ' \
           '--num_steps 26 ' \
           '--num_seqs 32 ' \
           '--learning_rate 0.001 ' \
+          '--sheetname Sheet1 ' \
           '--max_steps 20000'.split()
+# ## 小黄鸡问答
+# args_in = '--input_file data/xiaohuangji50w_fenciA.conv ' \
+#           '--name xhj ' \
+#           '--num_steps 26 ' \
+#           '--num_seqs 32 ' \
+#           '--learning_rate 0.001 ' \
+#           '--max_steps 20000'.split()
 
 def parseArgs(args):
     """
@@ -86,38 +80,6 @@ def parseArgs(args):
 FLAGS = parseArgs(args_in)
 
 
-# charLSTM
-def main2(_):
-    model_path = os.path.join('model', FLAGS.name)
-    if os.path.exists(model_path) is False:
-        os.makedirs(model_path)
-    with codecs.open(FLAGS.input_file, encoding='utf-8') as f:
-        text = f.read()
-    converter = TextConverter(text, FLAGS.max_vocab)
-    converter.save_to_file(os.path.join(model_path, 'converter.pkl'))
-
-    arr = converter.text_to_arr(text)
-    g = batch_generator(arr, FLAGS.num_seqs, FLAGS.num_steps)
-    print(converter.vocab_size)
-    model = CharLSTM(converter.vocab_size,
-                    batch_size=FLAGS.num_seqs,
-                    num_steps=FLAGS.num_steps,
-                    lstm_size=FLAGS.lstm_size,
-                    num_layers=FLAGS.num_layers,
-                    learning_rate=FLAGS.learning_rate,
-                    train_keep_prob=FLAGS.train_keep_prob,
-                    use_embedding=FLAGS.use_embedding,
-                    embedding_size=FLAGS.embedding_size
-                    )
-    model.train(g,
-                FLAGS.max_steps,
-                model_path,
-                FLAGS.save_every_n,
-                FLAGS.log_every_n,
-                )
-
-
-import xlrd
 from read_utils import get_excel_QAs, get_QAs_text
 # DualLSTM
 def main(_):
@@ -125,17 +87,21 @@ def main(_):
     if os.path.exists(model_path) is False:
         os.makedirs(model_path)
 
-    # # excel data
-    # QAs = get_excel_QAs(FLAGS.input_file)  # 要求excel文件格式，第一个表，第一列id，第二列query,第三列response
+    # excel data
+    QAs = get_excel_QAs(FLAGS.input_file)  # 要求excel文件格式，第一个表，第一列id，第二列query,第三列response
 
-    # xhj data
-    from read_utils import loadConversations
-    QAs = loadConversations(FLAGS.input_file)
+    # # xhj data
+    # from read_utils import loadConversations
+    # QAs = loadConversations(FLAGS.input_file)
 
     text = get_QAs_text(QAs)
 
-    converter = TextConverter(text, FLAGS.max_vocab)
-    converter.save_to_file(os.path.join(model_path, 'converter.pkl'))
+    if os.path.exists(os.path.join(model_path, 'converter.pkl')) is False:
+        print('词库文件不存在,创建...')
+        converter = TextConverter(text, FLAGS.max_vocab)
+        converter.save_to_file(os.path.join(model_path, 'converter.pkl'))
+    else:
+        converter = TextConverter(filename=os.path.join(model_path, 'converter.pkl'))
 
     QA_arrs = converter.QAs_to_arrs(QAs, FLAGS.num_steps)
     samples = converter.samples_for_train(QA_arrs)
